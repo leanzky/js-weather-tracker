@@ -248,7 +248,7 @@ function updateRainfallChart(historyData) {
   });
 }
 
-// --- PREMIUM SOCIAL MEDIA CARD SNAPSHOT ENGINE ---
+// --- PREMIUM SOCIAL MEDIA CARD SNAPSHOT ENGINE (LOCAL ASSET FIX) ---
 document.getElementById("download-btn")?.addEventListener("click", () => {
   const downloadBtn = document.getElementById("download-btn");
   if (downloadBtn) downloadBtn.innerText = "⏳ Generating...";
@@ -278,6 +278,24 @@ document.getElementById("download-btn")?.addEventListener("click", () => {
     cardGradient = "linear-gradient(135deg, #d97706, #ea580c, #0f172a)"; // Warm amber
   }
 
+  // Convert local img file into a secure Base64 string to bypass HTML2Canvas image generation security limits
+  const localSealImg = document.getElementById("dashboard-seal");
+  let secureSealSrc = "";
+
+  if (localSealImg) {
+    try {
+      const tempCanvas = document.createElement("canvas");
+      tempCanvas.width = localSealImg.naturalWidth || localSealImg.width;
+      tempCanvas.height = localSealImg.naturalHeight || localSealImg.height;
+      const ctx = tempCanvas.getContext("2d");
+      ctx.drawImage(localSealImg, 0, 0);
+      secureSealSrc = tempCanvas.toDataURL("image/jpeg");
+    } catch (e) {
+      console.warn("Could not capture image via canvas context loop, defaulting to path direct:", e);
+      secureSealSrc = localSealImg.src;
+    }
+  }
+
   // Create an off-screen temporary structural block styled beautifully for portrait metrics
   const cardContainer = document.createElement("div");
   cardContainer.style.position = "absolute";
@@ -288,14 +306,13 @@ document.getElementById("download-btn")?.addEventListener("click", () => {
   cardContainer.style.background = cardGradient;
   cardContainer.style.fontFamily = "'Plus Jakarta Sans', sans-serif";
   cardContainer.style.color = "#ffffff";
-  cardContainer.style.borderRadius = "0px"; // Clean export borders
+  cardContainer.style.borderRadius = "0px";
 
-  // Formulate clean, scannable layout template structure
+  // Formulate clean, scannable layout template structure using your real Tigaon seal asset
   cardContainer.innerHTML = `
-    <!-- Header Branding Block -->
     <div style="display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid rgba(255,255,255,0.15); padding-bottom: 20px; margin-bottom: 25px;">
       <div style="display: flex; align-items: center; gap: 15px;">
-        <img src="https://upload.wikimedia.org/wikipedia/commons/f/f6/Tigaon_Camarines_Sur_official_seal.png" style="width: 60px; height: 60px; object-fit: contain;" />
+        <img src="${secureSealSrc}" style="width: 65px; height: 65px; object-fit: contain; border-radius: 50%; border: 2px solid rgba(255,255,255,0.2);" />
         <div>
           <h2 style="margin: 0; font-size: 26px; font-weight: 800; tracking-tight: -0.05em;">${locationText}</h2>
           <p style="margin: 3px 0 0 0; font-size: 12px; opacity: 0.8; font-weight: 500;">📅 Updated: ${updateTime}</p>
@@ -306,7 +323,6 @@ document.getElementById("download-btn")?.addEventListener("click", () => {
       </div>
     </div>
 
-    <!-- Core Temperature Hero Grid -->
     <div style="background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2); padding: 25px; border-radius: 24px; margin-bottom: 20px; text-align: center; position: relative;">
       <span style="font-size: 11px; font-weight: 700; text-transform: uppercase; opacity: 0.6; letter-spacing: 0.05em;">Current Temperature</span>
       <h1 style="margin: 5px 0; font-size: 72px; font-weight: 900; line-height: 1;">${temp}°C</h1>
@@ -314,29 +330,24 @@ document.getElementById("download-btn")?.addEventListener("click", () => {
       <p style="margin: 8px 0 0 0; font-size: 12px; font-weight: 600; padding: 4px 12px; background: rgba(0,0,0,0.2); border-radius: 20px; display: inline-block;">${comfort}</p>
     </div>
 
-    <!-- Multi-column Descriptive Grid -->
     <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 25px;">
       
-      <!-- Sunlight / UV Panel -->
       <div style="background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.15); padding: 18px; border-radius: 20px;">
         <span style="font-size: 10px; font-weight: 700; text-transform: uppercase; opacity: 0.6;">Sunlight Intensity</span>
         <div style="font-size: 15px; font-weight: 700; color: #fbbf24; margin-top: 4px;">${sunlight}</div>
       </div>
 
-      <!-- Air Status Panel -->
       <div style="background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.15); padding: 18px; border-radius: 20px;">
         <span style="font-size: 10px; font-weight: 700; text-transform: uppercase; opacity: 0.6;">Air & Comfort</span>
         <div style="font-size: 15px; font-weight: 700; color: #7dd3fc; margin-top: 4px;">${airStatus}</div>
       </div>
 
-      <!-- Hydrology Metrics -->
       <div style="background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.15); padding: 18px; border-radius: 20px;">
         <span style="font-size: 10px; font-weight: 700; text-transform: uppercase; opacity: 0.6;">Atmospheric Moisture</span>
         <div style="font-size: 13px; font-weight: 600; margin-top: 4px; opacity: 0.95;">Humidity: <b>${humidity}%</b></div>
         <div style="font-size: 12px; opacity: 0.7; margin-top: 2px;">Dew Point: ${dew}°C</div>
       </div>
 
-      <!-- Wind Profile -->
       <div style="background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.15); padding: 18px; border-radius: 20px;">
         <span style="font-size: 10px; font-weight: 700; text-transform: uppercase; opacity: 0.6;">Anemometer Wind</span>
         <div style="font-size: 13px; font-weight: 600; margin-top: 4px; opacity: 0.95;">Velocity: <b>${windSpeed} km/h</b></div>
@@ -344,7 +355,6 @@ document.getElementById("download-btn")?.addEventListener("click", () => {
       </div>
     </div>
 
-    <!-- Rainfall Analytics Summary Footer Banner -->
     <div style="background: rgba(16, 185, 129, 0.15); border: 1px solid rgba(16, 185, 129, 0.4); padding: 20px; border-radius: 24px; display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px;">
       <div>
         <span style="font-size: 10px; font-weight: 700; text-transform: uppercase; color: #34d399;">Precipitation Status</span>
@@ -356,7 +366,6 @@ document.getElementById("download-btn")?.addEventListener("click", () => {
       </div>
     </div>
 
-    <!-- Professional Base Footer Info -->
     <div style="display: flex; justify-content: space-between; align-items: center; opacity: 0.5; font-size: 11px; padding-top: 5px;">
       <div>📍 Partido District • Camarines Sur • Bicol Region</div>
       <div>PWS Network Hub</div>
@@ -365,14 +374,13 @@ document.getElementById("download-btn")?.addEventListener("click", () => {
 
   document.body.appendChild(cardContainer);
 
-  // Run generation execution using clean CORS image configuration
+  // Render execution using high-scale density overrides
   html2canvas(cardContainer, {
     useCORS: true,
-    allowTaint: false,
+    allowTaint: true,
     scale: 3, // Premium ultra-crisp resolution scale multiplier for high-density mobile screens
     logging: false
   }).then(canvas => {
-    // Clean up temporary DOM instance
     document.body.removeChild(cardContainer);
 
     const filename = `Weather_Report_${locationText.replace(/[\s,]+/g, '_')}.png`;
