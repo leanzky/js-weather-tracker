@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Public Weather Station Dashboard</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body id="dashboard-body" class="transition-all duration-1000 ease-in-out min-h-screen bg-slate-900 text-white font-sans p-4 md:p-8">
+
+  <div class="max-w-6xl mx-auto">
+    
+    <header class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-8">
+      <div>
+        <h1 id="station-location" class="text-3xl md:text-4xl font-extrabold tracking-tight">Detecting Station...</h1>
+        <p class="text-sm opacity-75 mt-1 flex items-center gap-2">
+          <span class="inline-block w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+          Station ID: <span id="station-id" class="font-mono">--</span> 
+          • Updated: <span id="station-time">--</span>
+        </p>
+      </div>
+      <div class="bg-white/10 backdrop-blur-md border border-white/10 px-4 py-2 rounded-xl text-xs font-bold tracking-wider uppercase shadow-sm">
+        Public Environmental Hub
+      </div>
+    </header>
+
+    <main class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6">
+      
+      <div class="sm:col-span-2 bg-white/10 backdrop-blur-md border border-white/20 p-6 md:p-8 rounded-3xl shadow-xl flex flex-col justify-between relative overflow-hidden group">
+        <div id="bg-weather-icon" class="absolute -right-2 -top-2 text-[130px] opacity-25 select-none pointer-events-none transition-all">☀️</div>
+        
+        <div>
+          <span class="text-xs font-bold uppercase tracking-widest opacity-60">Current Temperature</span>
+          <div class="text-6xl md:text-7xl font-black tracking-tighter my-2 flex items-start">
+            <span id="metric-temp">--</span><span class="text-3xl font-medium mt-1">°C</span>
+          </div>
+        </div>
+        <div class="border-t border-white/10 pt-4 mt-6 flex justify-between items-end">
+          <div>
+            <p class="text-xs uppercase tracking-wider opacity-60">RealFeel Heat Index</p>
+            <p class="text-2xl font-black"><span id="metric-heat">--</span>°C</p>
+          </div>
+          <div class="text-right max-w-[60%]">
+            <p class="text-xs uppercase tracking-wider opacity-60 mb-0.5">Public Safety Advisory</p>
+            <p id="comfort-status" class="text-sm font-semibold text-emerald-300">Evaluating health status...</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="bg-white/10 backdrop-blur-md border border-white/20 p-6 rounded-3xl shadow-xl flex flex-col justify-between">
+        <div>
+          <span class="text-xs font-bold uppercase tracking-widest opacity-60">Sunlight Intensity</span>
+          <div id="solar-status" class="text-lg font-bold text-amber-300 mt-1">Reading sunlight...</div>
+          <div class="text-xs opacity-50 mt-0.5"><span id="metric-solar">--</span> W/m² raw value</div>
+        </div>
+        <div class="bg-white/5 border border-white/10 rounded-2xl p-4 mt-4">
+          <div class="flex justify-between items-center mb-1">
+            <span class="text-xs font-semibold opacity-80">UV Skin Burn Risk</span>
+            <span id="metric-uv" class="text-base font-extrabold px-2 py-0.5 rounded-lg bg-white/20">--</span>
+          </div>
+          <div class="w-full bg-white/20 h-2 rounded-full overflow-hidden">
+            <div id="uv-gauge" class="bg-gradient-to-r from-green-400 to-red-500 h-full transition-all duration-1000" style="width: 0%"></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="bg-white/10 backdrop-blur-md border border-white/20 p-6 rounded-3xl shadow-xl flex flex-col justify-between">
+        <span class="text-xs font-bold uppercase tracking-widest opacity-60">Air Humidity & Comfort</span>
+        <div class="my-3">
+          <div id="air-status" class="text-lg font-bold text-sky-300">Measuring air quality...</div>
+        </div>
+        <div class="grid grid-cols-2 gap-2 text-xs opacity-70 border-t border-white/10 pt-3">
+          <div>Relative Humidity: <span id="metric-humidity" class="font-bold">--</span>%</div>
+          <div>Dew Point: <span id="metric-dew" class="font-bold">--</span>°C</div>
+        </div>
+        <div class="text-[10px] font-mono opacity-40 mt-2">
+          Barometric Pressure: <span id="metric-pressure">--</span> hPa
+        </div>
+      </div>
+
+      <div class="bg-white/10 backdrop-blur-md border border-white/20 p-6 rounded-3xl shadow-xl flex flex-col justify-between">
+        <span class="text-xs font-bold uppercase tracking-widest opacity-60">Wind Conditions</span>
+        <div class="flex items-center justify-between my-2">
+          <div>
+            <p class="text-2xl font-extrabold tracking-tight"><span id="metric-windspeed">--</span> <span class="text-xs font-normal opacity-70">km/h</span></p>
+            <p class="text-xs opacity-60 mt-0.5">Sudden Gusts: <span id="metric-windgust">--</span> km/h</p>
+          </div>
+          <div class="w-12 h-12 rounded-full border-2 border-white/30 flex items-center justify-center relative">
+            <div id="wind-direction-arrow" class="w-1 h-6 bg-amber-400 rounded-full transition-transform duration-1000" style="transform: rotate(0deg)"></div>
+          </div>
+        </div>
+        <div class="text-xs opacity-60 border-t border-white/10 pt-3">
+          Blowing Direction: <span id="metric-winddir">--</span>° Compass Heading
+        </div>
+      </div>
+
+      <div class="sm:col-span-2 bg-white/10 backdrop-blur-md border border-white/20 p-6 rounded-3xl shadow-xl flex flex-col justify-between">
+        <div class="flex justify-between items-start mb-2">
+          <div>
+            <span class="text-xs font-bold uppercase tracking-widest opacity-60">Rainfall Analytics</span>
+            <div id="rain-status" class="text-lg font-bold text-emerald-300 mt-0.5">Checking for rain...</div>
+          </div>
+          <div class="text-right text-xs opacity-75">
+            <div>Rate: <span id="metric-precip-rate" class="font-bold">--</span> mm/hr</div>
+            <div>Today's Total: <span id="metric-precip-total" class="font-bold">--</span> mm</div>
+          </div>
+        </div>
+        
+        <div class="w-full h-36 mt-2 relative">
+          <canvas id="rainTrendsChart"></canvas>
+        </div>
+      </div>
+
+    </main>
+  </div>
+
+  <script src="./app.js"></script>
+</body>
+</html>
