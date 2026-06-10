@@ -248,55 +248,65 @@ function updateRainfallChart(historyData) {
   });
 }
 
-// --- PREMIUM SOCIAL MEDIA CARD SNAPSHOT ENGINE (LOCAL ASSET FIX) ---
+// --- PREMIUM SOCIAL MEDIA CARD SNAPSHOT ENGINE (FIXED LAYOUT WRAPPERS) ---
 document.getElementById("download-btn")?.addEventListener("click", () => {
   const downloadBtn = document.getElementById("download-btn");
   if (downloadBtn) downloadBtn.innerText = "⏳ Generating...";
 
-  // Gather current real-time metrics safely from your dashboard DOM elements
+  // Helper utility to safely clean mixed numbers and avoid double-unit stamps
+  const cleanNum = (id) => {
+    const txt = document.getElementById(id)?.innerText || "--";
+    if (txt === "--") return "--";
+    const matched = txt.match(/[-+]?[0-8]*\.?[0-9]+/);
+    return matched ? matched[0] : txt;
+  };
+
+  // Safe data extraction wrappers
   const locationText = document.getElementById("station-location")?.innerText || "Tigaon";
   const updateTime = document.getElementById("station-time")?.innerText || "--";
-  const temp = document.getElementById("metric-temp")?.innerText || "--";
-  const heatIndex = document.getElementById("metric-heat")?.innerText || "--";
+  const temp = cleanNum("metric-temp");
+  const heatIndex = cleanNum("metric-heat");
   const comfort = document.getElementById("comfort-status")?.innerText || "";
   const sunlight = document.getElementById("solar-status")?.innerText || "";
   const airStatus = document.getElementById("air-status")?.innerText || "";
-  const humidity = document.getElementById("metric-humidity")?.innerText || "--";
-  const dew = document.getElementById("metric-dew")?.innerText || "--";
-  const windSpeed = document.getElementById("metric-windspeed")?.innerText || "--";
-  const windDir = document.getElementById("metric-winddir")?.innerText || "--";
+  const humidity = cleanNum("metric-humidity");
+  const dew = cleanNum("metric-dew");
+  const windSpeed = cleanNum("metric-windspeed");
+  const windDir = cleanNum("metric-winddir");
   const rainStatus = document.getElementById("rain-status")?.innerText || "";
-  const rainRate = document.getElementById("metric-precip-rate")?.innerText || "0.00";
-  const rainTotal = document.getElementById("metric-precip-total")?.innerText || "0.00";
+  const rainRate = cleanNum("metric-precip-rate");
+  const rainTotal = cleanNum("metric-precip-total");
   
-  // Detect current active gradient style from your dashboard background layout
+  // Dynamic Background Gradient Selector
   const currentBgClass = document.getElementById("dashboard-body")?.className || "";
-  let cardGradient = "linear-gradient(135deg, #2563eb, #4338ca, #0f172a)"; // Default comfortable blue
+  let cardGradient = "linear-gradient(135deg, #1e40af, #312e81, #020617)"; // Deep luxury indigo
   if (currentBgClass.includes("from-red-600")) {
-    cardGradient = "linear-gradient(135deg, #dc2626, #c2410c, #1c1917)"; // Danger hot
+    cardGradient = "linear-gradient(135deg, #991b1b, #7c2d12, #1c1917)"; // Severe weather crimson
   } else if (currentBgClass.includes("from-amber-600")) {
-    cardGradient = "linear-gradient(135deg, #d97706, #ea580c, #0f172a)"; // Warm amber
+    cardGradient = "linear-gradient(135deg, #b45309, #9a3412, #0f172a)"; // Heatwave amber
   }
 
-  // Convert local img file into a secure Base64 string to bypass HTML2Canvas image generation security limits
+  // Target local image parsing canvas loop
   const localSealImg = document.getElementById("dashboard-seal");
   let secureSealSrc = "";
 
-  if (localSealImg) {
+  if (localSealImg && localSealImg.complete && localSealImg.naturalWidth !== 0) {
     try {
       const tempCanvas = document.createElement("canvas");
-      tempCanvas.width = localSealImg.naturalWidth || localSealImg.width;
-      tempCanvas.height = localSealImg.naturalHeight || localSealImg.height;
+      tempCanvas.width = localSealImg.naturalWidth;
+      tempCanvas.height = localSealImg.naturalHeight;
       const ctx = tempCanvas.getContext("2d");
       ctx.drawImage(localSealImg, 0, 0);
-      secureSealSrc = tempCanvas.toDataURL("image/jpeg");
+      secureSealSrc = tempCanvas.toDataURL("image/png");
     } catch (e) {
-      console.warn("Could not capture image via canvas context loop, defaulting to path direct:", e);
-      secureSealSrc = localSealImg.src;
+      console.warn("Canvas export restricted, running Direct Path handling fallback:", e);
+      secureSealSrc = "./images/seal.jpg";
     }
+  } else {
+    secureSealSrc = "./images/seal.jpg";
   }
 
-  // Create an off-screen temporary structural block styled beautifully for portrait metrics
+  // Create clean 600px canvas workspace
   const cardContainer = document.createElement("div");
   cardContainer.style.position = "absolute";
   cardContainer.style.left = "-9999px";
@@ -304,81 +314,105 @@ document.getElementById("download-btn")?.addEventListener("click", () => {
   cardContainer.style.width = "600px";
   cardContainer.style.padding = "40px";
   cardContainer.style.background = cardGradient;
-  cardContainer.style.fontFamily = "'Plus Jakarta Sans', sans-serif";
+  cardContainer.style.fontFamily = "'Plus Jakarta Sans', system-ui, sans-serif";
   cardContainer.style.color = "#ffffff";
-  cardContainer.style.borderRadius = "0px";
+  cardContainer.style.boxSizing = "border-box";
 
-  // Formulate clean, scannable layout template structure using your real Tigaon seal asset
   cardContainer.innerHTML = `
-    <div style="display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid rgba(255,255,255,0.15); padding-bottom: 20px; margin-bottom: 25px;">
-      <div style="display: flex; align-items: center; gap: 15px;">
-        <img src="${secureSealSrc}" style="width: 65px; height: 65px; object-fit: contain; border-radius: 50%; border: 2px solid rgba(255,255,255,0.2);" />
+    <style>
+      @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@500;600;700;800;900&display=swap');
+      /* Hard resets to force html2canvas to align perfectly */
+      * { box-sizing: border-box; margin: 0; padding: 0; }
+    </style>
+
+    <div style="display: flex; flex-direction: row; align-items: center; justify-content: space-between; border-bottom: 2px solid rgba(255,255,255,0.12); padding-bottom: 20px; margin-bottom: 25px; width: 520px;">
+      <div style="display: flex; flex-direction: row; align-items: center; gap: 16px;">
+        <img src="${secureSealSrc}" style="width: 60px; height: 60px; object-fit: contain; border-radius: 50%; background: #ffffff; padding: 2px; box-shadow: 0 4px 12px rgba(0,0,0,0.35); border: 1px solid rgba(255,255,255,0.2);" />
         <div>
-          <h2 style="margin: 0; font-size: 26px; font-weight: 800; tracking-tight: -0.05em;">${locationText}</h2>
-          <p style="margin: 3px 0 0 0; font-size: 12px; opacity: 0.8; font-weight: 500;">📅 Updated: ${updateTime}</p>
+          <h2 style="font-size: 24px; font-weight: 900; tracking-tight: -0.04em; color: #ffffff; line-height: 1.2;">${locationText}</h2>
+          <p style="margin-top: 4px; font-size: 12px; opacity: 0.75; font-weight: 600; letter-spacing: 0.02em;">📅 ${updateTime}</p>
         </div>
       </div>
-      <div style="background: rgba(255,255,255,0.15); padding: 6px 12px; border-radius: 10px; font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em;">
-        LIVE REPORT
+      <div style="width: 130px; text-align: right;">
+        <span style="display: inline-block; background: rgba(255,255,255,0.15); padding: 6px 12px; border-radius: 12px; font-size: 11px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.04em; white-space: nowrap; text-align: center;">
+          LIVE ADVISORY
+        </span>
       </div>
     </div>
 
-    <div style="background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2); padding: 25px; border-radius: 24px; margin-bottom: 20px; text-align: center; position: relative;">
-      <span style="font-size: 11px; font-weight: 700; text-transform: uppercase; opacity: 0.6; letter-spacing: 0.05em;">Current Temperature</span>
-      <h1 style="margin: 5px 0; font-size: 72px; font-weight: 900; line-height: 1;">${temp}°C</h1>
-      <p style="margin: 5px 0 0 0; font-size: 15px; font-weight: 700; opacity: 0.9;">RealFeel Heat Index: <span style="color: #fbbf24;">${heatIndex}°C</span></p>
-      <p style="margin: 8px 0 0 0; font-size: 12px; font-weight: 600; padding: 4px 12px; background: rgba(0,0,0,0.2); border-radius: 20px; display: inline-block;">${comfort}</p>
-    </div>
-
-    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 25px;">
+    <div style="width: 520px; background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.16); padding: 35px 20px; border-radius: 28px; margin-bottom: 20px; text-align: center; box-shadow: inset 0 1px 2px rgba(255,255,255,0.1);">
+      <span style="font-size: 11px; font-weight: 700; text-transform: uppercase; opacity: 0.5; letter-spacing: 0.08em; margin-bottom: 12px; display: block;">Ambient Reading</span>
       
-      <div style="background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.15); padding: 18px; border-radius: 20px;">
-        <span style="font-size: 10px; font-weight: 700; text-transform: uppercase; opacity: 0.6;">Sunlight Intensity</span>
-        <div style="font-size: 15px; font-weight: 700; color: #fbbf24; margin-top: 4px;">${sunlight}</div>
+      <div style="text-align: center; line-height: 1; margin-bottom: 12px;">
+        <span style="font-size: 82px; font-weight: 900; letter-spacing: -0.04em; display: inline-block; vertical-align: top;">${temp}</span>
+        <span style="font-size: 34px; font-weight: 700; display: inline-block; vertical-align: top; margin-top: 8px; margin-left: 2px;">°C</span>
       </div>
 
-      <div style="background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.15); padding: 18px; border-radius: 20px;">
-        <span style="font-size: 10px; font-weight: 700; text-transform: uppercase; opacity: 0.6;">Air & Comfort</span>
-        <div style="font-size: 15px; font-weight: 700; color: #7dd3fc; margin-top: 4px;">${airStatus}</div>
-      </div>
-
-      <div style="background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.15); padding: 18px; border-radius: 20px;">
-        <span style="font-size: 10px; font-weight: 700; text-transform: uppercase; opacity: 0.6;">Atmospheric Moisture</span>
-        <div style="font-size: 13px; font-weight: 600; margin-top: 4px; opacity: 0.95;">Humidity: <b>${humidity}%</b></div>
-        <div style="font-size: 12px; opacity: 0.7; margin-top: 2px;">Dew Point: ${dew}°C</div>
-      </div>
-
-      <div style="background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.15); padding: 18px; border-radius: 20px;">
-        <span style="font-size: 10px; font-weight: 700; text-transform: uppercase; opacity: 0.6;">Anemometer Wind</span>
-        <div style="font-size: 13px; font-weight: 600; margin-top: 4px; opacity: 0.95;">Velocity: <b>${windSpeed} km/h</b></div>
-        <div style="font-size: 12px; opacity: 0.7; margin-top: 2px;">Heading: ${windDir}° Compass</div>
+      <p style="font-size: 15px; font-weight: 700; opacity: 0.9; margin: 0 auto 20px auto; text-align: center;">
+        RealFeel Heat Index: <span style="color: #fbbf24;">${heatIndex}°C</span>
+      </p>
+      
+      <div style="text-align: center; width: 100%;">
+        <span style="display: inline-block; background: rgba(0, 0, 0, 0.25); border: 1px solid rgba(255, 255, 255, 0.08); padding: 8px 18px; border-radius: 20px; font-size: 13px; font-weight: 700; color: #ffffff; line-height: 1.4; max-width: 440px; text-align: center;">
+          ${comfort}
+        </span>
       </div>
     </div>
 
-    <div style="background: rgba(16, 185, 129, 0.15); border: 1px solid rgba(16, 185, 129, 0.4); padding: 20px; border-radius: 24px; display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px;">
-      <div>
-        <span style="font-size: 10px; font-weight: 700; text-transform: uppercase; color: #34d399;">Precipitation Status</span>
-        <div style="font-size: 16px; font-weight: 800; color: #ffffff; margin-top: 2px;">${rainStatus}</div>
+    <div style="display: flex; flex-direction: column; gap: 16px; margin-bottom: 20px; width: 520px;">
+      
+      <div style="display: flex; flex-direction: row; gap: 16px; width: 100%;">
+        <div style="width: 252px; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.12); padding: 18px; border-radius: 22px; display: flex; flex-direction: column;">
+          <span style="font-size: 10px; font-weight: 700; text-transform: uppercase; opacity: 0.5; letter-spacing: 0.04em; margin-bottom: 6px;">Solar Intensity</span>
+          <div style="font-size: 16px; font-weight: 800; color: #fbbf24;">${sunlight}</div>
+        </div>
+
+        <div style="width: 252px; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.12); padding: 18px; border-radius: 22px; display: flex; flex-direction: column;">
+          <span style="font-size: 10px; font-weight: 700; text-transform: uppercase; opacity: 0.5; letter-spacing: 0.04em; margin-bottom: 6px;">Comfort Profile</span>
+          <div style="font-size: 16px; font-weight: 800; color: #38bdf8;">${airStatus}</div>
+        </div>
       </div>
-      <div style="text-align: right; font-size: 12px; opacity: 0.9; line-height: 1.4;">
-        <div>Rate: <b>${rainRate} mm/hr</b></div>
-        <div>Accumulated Total: <b>${rainTotal} mm</b></div>
+
+      <div style="display: flex; flex-direction: row; gap: 16px; width: 100%;">
+        <div style="width: 252px; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.12); padding: 18px; border-radius: 22px; display: flex; flex-direction: column; justify-content: center;">
+          <span style="font-size: 10px; font-weight: 700; text-transform: uppercase; opacity: 0.5; letter-spacing: 0.04em; margin-bottom: 6px;">Atmospheric Moisture</span>
+          <div style="font-size: 14px; font-weight: 700;">Humidity: <span style="color: #a7f3d0;">${humidity}%</span></div>
+          <div style="font-size: 12px; opacity: 0.6; margin-top: 4px;">Dew Point: ${dew}°C</div>
+        </div>
+
+        <div style="width: 252px; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.12); padding: 18px; border-radius: 22px; display: flex; flex-direction: column; justify-content: center;">
+          <span style="font-size: 10px; font-weight: 700; text-transform: uppercase; opacity: 0.5; letter-spacing: 0.04em; margin-bottom: 6px;">Anemometer Vector</span>
+          <div style="font-size: 14px; font-weight: 700;">Velocity: <span style="color: #fef08a;">${windSpeed} km/h</span></div>
+          <div style="font-size: 12px; opacity: 0.6; margin-top: 4px;">Heading: ${windDir}° Compass</div>
+        </div>
+      </div>
+
+    </div>
+
+    <div style="width: 520px; background: rgba(16, 185, 129, 0.12); border: 1px solid rgba(16, 185, 129, 0.35); padding: 18px 22px; border-radius: 24px; display: flex; flex-direction: row; justify-content: space-between; align-items: center; margin-bottom: 25px;">
+      <div style="display: flex; flex-direction: column;">
+        <span style="font-size: 10px; font-weight: 700; text-transform: uppercase; color: #34d399; letter-spacing: 0.04em; margin-bottom: 4px;">Precipitation Tracker</span>
+        <div style="font-size: 17px; font-weight: 800; color: #ffffff;">${rainStatus}</div>
+      </div>
+      <div style="text-align: right; font-size: 12px; font-weight: 600; opacity: 0.95; line-height: 1.4; display: flex; flex-direction: column;">
+        <div>Fall Rate: <span style="font-weight: 800; color: #34d399;">${rainRate} mm/hr</span></div>
+        <div style="margin-top: 2px;">Accumulated: <span style="font-weight: 800; color: #34d399;">${rainTotal} mm</span></div>
       </div>
     </div>
 
-    <div style="display: flex; justify-content: space-between; align-items: center; opacity: 0.5; font-size: 11px; padding-top: 5px;">
-      <div>📍 Partido District • Camarines Sur • Bicol Region</div>
-      <div>PWS Network Hub</div>
+    <div style="width: 520px; display: flex; flex-direction: row; justify-content: space-between; align-items: center; opacity: 0.45; font-size: 11px; font-weight: 600; letter-spacing: 0.01em;">
+      <div>📍 Tigaon • Partido District • Camarines Sur</div>
+      <div>PWS Hub Network</div>
     </div>
   `;
 
   document.body.appendChild(cardContainer);
 
-  // Render execution using high-scale density overrides
+  // Initialize secure canvas capture wrapper
   html2canvas(cardContainer, {
     useCORS: true,
     allowTaint: true,
-    scale: 3, // Premium ultra-crisp resolution scale multiplier for high-density mobile screens
+    scale: 2.5, // Crisp high-definition desktop display format
     logging: false
   }).then(canvas => {
     document.body.removeChild(cardContainer);
