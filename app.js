@@ -248,35 +248,143 @@ function updateRainfallChart(historyData) {
   });
 }
 
-// --- SNAPSHOT DOWNLOAD ENGINE ---
+// --- PREMIUM SOCIAL MEDIA CARD SNAPSHOT ENGINE ---
 document.getElementById("download-btn")?.addEventListener("click", () => {
-  // Captures the entire body grid
-  const dashboardElement = document.getElementById("dashboard-body");
-  const stationLocation = document.getElementById("station-location")?.innerText || "Weather_Station";
-  
-  // Format filename using the current location name safely
-  const filename = `Weather_Snapshot_${stationLocation.replace(/[\s,]+/g, '_')}.png`;
-
-  // Hide the snapshot button instantly so it doesn't photograph itself
   const downloadBtn = document.getElementById("download-btn");
-  if (downloadBtn) downloadBtn.style.visibility = "hidden";
+  if (downloadBtn) downloadBtn.innerText = "⏳ Generating...";
 
-  html2canvas(dashboardElement, {
-    useCORS: true,          // Lets external assets render perfectly
-    scale: 2,               // Double resolution sharpness
-    backgroundColor: null,  // Preserves your gorgeous background gradients
+  // Gather current real-time metrics safely from your dashboard DOM elements
+  const locationText = document.getElementById("station-location")?.innerText || "Tigaon";
+  const updateTime = document.getElementById("station-time")?.innerText || "--";
+  const temp = document.getElementById("metric-temp")?.innerText || "--";
+  const heatIndex = document.getElementById("metric-heat")?.innerText || "--";
+  const comfort = document.getElementById("comfort-status")?.innerText || "";
+  const sunlight = document.getElementById("solar-status")?.innerText || "";
+  const airStatus = document.getElementById("air-status")?.innerText || "";
+  const humidity = document.getElementById("metric-humidity")?.innerText || "--";
+  const dew = document.getElementById("metric-dew")?.innerText || "--";
+  const windSpeed = document.getElementById("metric-windspeed")?.innerText || "--";
+  const windDir = document.getElementById("metric-winddir")?.innerText || "--";
+  const rainStatus = document.getElementById("rain-status")?.innerText || "";
+  const rainRate = document.getElementById("metric-precip-rate")?.innerText || "0.00";
+  const rainTotal = document.getElementById("metric-precip-total")?.innerText || "0.00";
+  
+  // Detect current active gradient style from your dashboard background layout
+  const currentBgClass = document.getElementById("dashboard-body")?.className || "";
+  let cardGradient = "linear-gradient(135deg, #2563eb, #4338ca, #0f172a)"; // Default comfortable blue
+  if (currentBgClass.includes("from-red-600")) {
+    cardGradient = "linear-gradient(135deg, #dc2626, #c2410c, #1c1917)"; // Danger hot
+  } else if (currentBgClass.includes("from-amber-600")) {
+    cardGradient = "linear-gradient(135deg, #d97706, #ea580c, #0f172a)"; // Warm amber
+  }
+
+  // Create an off-screen temporary structural block styled beautifully for portrait metrics
+  const cardContainer = document.createElement("div");
+  cardContainer.style.position = "absolute";
+  cardContainer.style.left = "-9999px";
+  cardContainer.style.top = "-9999px";
+  cardContainer.style.width = "600px";
+  cardContainer.style.padding = "40px";
+  cardContainer.style.background = cardGradient;
+  cardContainer.style.fontFamily = "'Plus Jakarta Sans', sans-serif";
+  cardContainer.style.color = "#ffffff";
+  cardContainer.style.borderRadius = "0px"; // Clean export borders
+
+  // Formulate clean, scannable layout template structure
+  cardContainer.innerHTML = `
+    <!-- Header Branding Block -->
+    <div style="display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid rgba(255,255,255,0.15); padding-bottom: 20px; margin-bottom: 25px;">
+      <div style="display: flex; align-items: center; gap: 15px;">
+        <img src="https://upload.wikimedia.org/wikipedia/commons/f/f6/Tigaon_Camarines_Sur_official_seal.png" style="width: 60px; height: 60px; object-fit: contain;" />
+        <div>
+          <h2 style="margin: 0; font-size: 26px; font-weight: 800; tracking-tight: -0.05em;">${locationText}</h2>
+          <p style="margin: 3px 0 0 0; font-size: 12px; opacity: 0.8; font-weight: 500;">📅 Updated: ${updateTime}</p>
+        </div>
+      </div>
+      <div style="background: rgba(255,255,255,0.15); padding: 6px 12px; border-radius: 10px; font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em;">
+        LIVE REPORT
+      </div>
+    </div>
+
+    <!-- Core Temperature Hero Grid -->
+    <div style="background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2); padding: 25px; border-radius: 24px; margin-bottom: 20px; text-align: center; position: relative;">
+      <span style="font-size: 11px; font-weight: 700; text-transform: uppercase; opacity: 0.6; letter-spacing: 0.05em;">Current Temperature</span>
+      <h1 style="margin: 5px 0; font-size: 72px; font-weight: 900; line-height: 1;">${temp}°C</h1>
+      <p style="margin: 5px 0 0 0; font-size: 15px; font-weight: 700; opacity: 0.9;">RealFeel Heat Index: <span style="color: #fbbf24;">${heatIndex}°C</span></p>
+      <p style="margin: 8px 0 0 0; font-size: 12px; font-weight: 600; padding: 4px 12px; background: rgba(0,0,0,0.2); border-radius: 20px; display: inline-block;">${comfort}</p>
+    </div>
+
+    <!-- Multi-column Descriptive Grid -->
+    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 25px;">
+      
+      <!-- Sunlight / UV Panel -->
+      <div style="background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.15); padding: 18px; border-radius: 20px;">
+        <span style="font-size: 10px; font-weight: 700; text-transform: uppercase; opacity: 0.6;">Sunlight Intensity</span>
+        <div style="font-size: 15px; font-weight: 700; color: #fbbf24; margin-top: 4px;">${sunlight}</div>
+      </div>
+
+      <!-- Air Status Panel -->
+      <div style="background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.15); padding: 18px; border-radius: 20px;">
+        <span style="font-size: 10px; font-weight: 700; text-transform: uppercase; opacity: 0.6;">Air & Comfort</span>
+        <div style="font-size: 15px; font-weight: 700; color: #7dd3fc; margin-top: 4px;">${airStatus}</div>
+      </div>
+
+      <!-- Hydrology Metrics -->
+      <div style="background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.15); padding: 18px; border-radius: 20px;">
+        <span style="font-size: 10px; font-weight: 700; text-transform: uppercase; opacity: 0.6;">Atmospheric Moisture</span>
+        <div style="font-size: 13px; font-weight: 600; margin-top: 4px; opacity: 0.95;">Humidity: <b>${humidity}%</b></div>
+        <div style="font-size: 12px; opacity: 0.7; margin-top: 2px;">Dew Point: ${dew}°C</div>
+      </div>
+
+      <!-- Wind Profile -->
+      <div style="background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.15); padding: 18px; border-radius: 20px;">
+        <span style="font-size: 10px; font-weight: 700; text-transform: uppercase; opacity: 0.6;">Anemometer Wind</span>
+        <div style="font-size: 13px; font-weight: 600; margin-top: 4px; opacity: 0.95;">Velocity: <b>${windSpeed} km/h</b></div>
+        <div style="font-size: 12px; opacity: 0.7; margin-top: 2px;">Heading: ${windDir}° Compass</div>
+      </div>
+    </div>
+
+    <!-- Rainfall Analytics Summary Footer Banner -->
+    <div style="background: rgba(16, 185, 129, 0.15); border: 1px solid rgba(16, 185, 129, 0.4); padding: 20px; border-radius: 24px; display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px;">
+      <div>
+        <span style="font-size: 10px; font-weight: 700; text-transform: uppercase; color: #34d399;">Precipitation Status</span>
+        <div style="font-size: 16px; font-weight: 800; color: #ffffff; margin-top: 2px;">${rainStatus}</div>
+      </div>
+      <div style="text-align: right; font-size: 12px; opacity: 0.9; line-height: 1.4;">
+        <div>Rate: <b>${rainRate} mm/hr</b></div>
+        <div>Accumulated Total: <b>${rainTotal} mm</b></div>
+      </div>
+    </div>
+
+    <!-- Professional Base Footer Info -->
+    <div style="display: flex; justify-content: space-between; align-items: center; opacity: 0.5; font-size: 11px; padding-top: 5px;">
+      <div>📍 Partido District • Camarines Sur • Bicol Region</div>
+      <div>PWS Network Hub</div>
+    </div>
+  `;
+
+  document.body.appendChild(cardContainer);
+
+  // Run generation execution using clean CORS image configuration
+  html2canvas(cardContainer, {
+    useCORS: true,
+    allowTaint: false,
+    scale: 3, // Premium ultra-crisp resolution scale multiplier for high-density mobile screens
     logging: false
   }).then(canvas => {
-    // Bring back the button to the webpage
-    if (downloadBtn) downloadBtn.style.visibility = "visible";
+    // Clean up temporary DOM instance
+    document.body.removeChild(cardContainer);
 
-    // Trigger the file download in browser memory
+    const filename = `Weather_Report_${locationText.replace(/[\s,]+/g, '_')}.png`;
     const link = document.createElement("a");
     link.download = filename;
     link.href = canvas.toDataURL("image/png");
     link.click();
+
+    if (downloadBtn) downloadBtn.innerText = "📸 Share Card";
   }).catch(err => {
-    console.error("Snapshot generation broke down:", err);
-    if (downloadBtn) downloadBtn.style.visibility = "visible";
+    console.error("Failed to generate custom share card asset:", err);
+    if (cardContainer.parentNode) document.body.removeChild(cardContainer);
+    if (downloadBtn) downloadBtn.innerText = "📸 Share Card";
   });
 });

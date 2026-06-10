@@ -17,19 +17,22 @@
   <div class="max-w-6xl mx-auto">
     
     <header class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-8">
-      <div>
-        <h1 id="station-location" class="text-3xl md:text-4xl font-extrabold tracking-tight">Detecting Station...</h1>
-        <p class="text-sm opacity-75 mt-1 flex items-center gap-2">
-          <span class="inline-block w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
-          Station ID: <span id="station-id" class="font-mono">--</span> 
-          • Updated: <span id="station-time">--</span>
-        </p>
+      <div class="flex items-center gap-3">
+        <!-- Official Tigaon Municipal Logo for Dashboard View -->
+        <img src="https://upload.wikimedia.org/wikipedia/commons/f/f6/Tigaon_Camarines_Sur_official_seal.png" alt="Tigaon Seal" class="w-14 h-14 object-contain drop-shadow">
+        <div>
+          <h1 id="station-location" class="text-3xl md:text-4xl font-extrabold tracking-tight">Detecting Station...</h1>
+          <p class="text-sm opacity-75 mt-1 flex items-center gap-2">
+            <span class="inline-block w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+            Station ID: <span id="station-id" class="font-mono">--</span> 
+            • Updated: <span id="station-time">--</span>
+          </p>
+        </div>
       </div>
-      <div class="flex flex-wrap gap-2 sm:self-center">
+      <div class="flex gap-2">
         <button id="download-btn" class="bg-amber-500 hover:bg-amber-600 active:scale-95 transition-all px-4 py-2 rounded-xl text-xs font-bold tracking-wider uppercase shadow-sm text-slate-900 flex items-center gap-1.5">
-          📸 Take Snapshot
+          📸 Share Card
         </button>
-        
         <div class="bg-white/10 backdrop-blur-md border border-white/10 px-4 py-2 rounded-xl text-xs font-bold tracking-wider uppercase shadow-sm">
           Public Environmental Hub
         </div>
