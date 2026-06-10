@@ -248,7 +248,7 @@ function updateRainfallChart(historyData) {
   });
 }
 
-// --- PREMIUM SOCIAL MEDIA CARD SNAPSHOT ENGINE (FIXED LAYOUT WRAPPERS) ---
+// --- PREMIUM SOCIAL MEDIA CARD SNAPSHOT ENGINE (CLEAN COMPACT ENGALIGNMENT) ---
 document.getElementById("download-btn")?.addEventListener("click", () => {
   const downloadBtn = document.getElementById("download-btn");
   if (downloadBtn) downloadBtn.innerText = "⏳ Generating...";
@@ -325,7 +325,8 @@ document.getElementById("download-btn")?.addEventListener("click", () => {
       * { box-sizing: border-box; margin: 0; padding: 0; }
     </style>
 
-    <div style="display: flex; flex-direction: row; align-items: center; justify-content: space-between; border-bottom: 2px solid rgba(255,255,255,0.12); padding-bottom: 20px; margin-bottom: 25px; width: 520px;">
+    <!-- Header Block -->
+    <div style="display: flex; flex-direction: row; align-items: center; justify-content: space-between; border-bottom: 2px solid rgba(255,255,255,0.12); padding-bottom: 20px; margin-bottom: 30px; width: 520px;">
       <div style="display: flex; flex-direction: row; align-items: center; gap: 16px;">
         <img src="${secureSealSrc}" style="width: 60px; height: 60px; object-fit: contain; border-radius: 50%; background: #ffffff; padding: 2px; box-shadow: 0 4px 12px rgba(0,0,0,0.35); border: 1px solid rgba(255,255,255,0.2);" />
         <div>
@@ -333,34 +334,44 @@ document.getElementById("download-btn")?.addEventListener("click", () => {
           <p style="margin-top: 4px; font-size: 12px; opacity: 0.75; font-weight: 600; letter-spacing: 0.02em;">📅 ${updateTime}</p>
         </div>
       </div>
-      <div style="width: 130px; text-align: right;">
-        <span style="display: inline-block; background: rgba(255,255,255,0.15); padding: 6px 12px; border-radius: 12px; font-size: 11px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.04em; white-space: nowrap; text-align: center;">
+      
+      <!-- Live Advisory: Centered text display within a matching pill wrapper -->
+      <div style="display: flex; align-items: center; justify-content: center; background: rgba(255,255,255,0.14); padding: 8px 16px; border-radius: 20px; height: 36px;">
+        <span style="font-size: 11px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.05em; white-space: nowrap; line-height: 1; text-align: center; display: block; color: #ffffff;">
           LIVE ADVISORY
         </span>
       </div>
     </div>
 
-    <div style="width: 520px; background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.16); padding: 35px 20px; border-radius: 28px; margin-bottom: 20px; text-align: center; box-shadow: inset 0 1px 2px rgba(255,255,255,0.1);">
-      <span style="font-size: 11px; font-weight: 700; text-transform: uppercase; opacity: 0.5; letter-spacing: 0.08em; margin-bottom: 12px; display: block;">Ambient Reading</span>
+    <!-- Main Temperature Display Section (Ghost Border Completely Removed) -->
+    <div style="width: 520px; margin-bottom: 35px; text-align: center; display: flex; flex-direction: column; align-items: center;">
+      <span style="font-size: 12px; font-weight: 700; text-transform: uppercase; opacity: 0.5; letter-spacing: 0.08em; margin-bottom: 14px; display: block;">Ambient Reading</span>
       
-      <div style="text-align: center; line-height: 1; margin-bottom: 12px;">
-        <span style="font-size: 82px; font-weight: 900; letter-spacing: -0.04em; display: inline-block; vertical-align: top;">${temp}</span>
-        <span style="font-size: 34px; font-weight: 700; display: inline-block; vertical-align: top; margin-top: 8px; margin-left: 2px;">°C</span>
+      <!-- Temperature Core Counter -->
+      <div style="line-height: 1; margin-bottom: 16px; display: flex; flex-direction: row; align-items: flex-start; justify-content: center;">
+        <span style="font-size: 86px; font-weight: 900; letter-spacing: -0.04em; display: inline-block;">${temp}</span>
+        <span style="font-size: 36px; font-weight: 700; margin-top: 8px; margin-left: 3px; display: inline-block;">°C</span>
       </div>
 
-      <p style="font-size: 15px; font-weight: 700; opacity: 0.9; margin: 0 auto 20px auto; text-align: center;">
-        RealFeel Heat Index: <span style="color: #fbbf24;">${heatIndex}°C</span>
+      <!-- RealFeel Heat Index Line: Shifted Down with Added Padding Comfort -->
+      <p style="font-size: 16px; font-weight: 700; opacity: 0.95; margin: 6px auto 24px auto; text-align: center; letter-spacing: 0.01em;">
+        RealFeel Heat Index: <span style="color: #fbbf24; font-weight: 800;">${heatIndex}°C</span>
       </p>
       
-      <div style="text-align: center; width: 100%;">
-        <span style="display: inline-block; background: rgba(0, 0, 0, 0.25); border: 1px solid rgba(255, 255, 255, 0.08); padding: 8px 18px; border-radius: 20px; font-size: 13px; font-weight: 700; color: #ffffff; line-height: 1.4; max-width: 440px; text-align: center;">
-          ${comfort}
-        </span>
+      <!-- Public Safety Danger Box: Centered Alignment Wrapper -->
+      <div style="width: 100%; display: flex; justify-content: center; align-items: center;">
+        <div style="background: rgba(0, 0, 0, 0.25); border: 1px solid rgba(255, 255, 255, 0.06); padding: 10px 22px; border-radius: 20px; max-width: 460px; min-width: 280px; display: flex; justify-content: center; align-items: center; box-sizing: border-box;">
+          <span style="font-size: 13.5px; font-weight: 700; color: #ffffff; line-height: 1.4; text-align: center; letter-spacing: 0.01em; word-break: break-word; display: block; width: 100%;">
+            ${comfort}
+          </span>
+        </div>
       </div>
     </div>
 
+    <!-- Secondary Metrics Grid System -->
     <div style="display: flex; flex-direction: column; gap: 16px; margin-bottom: 20px; width: 520px;">
       
+      <!-- Row 1 -->
       <div style="display: flex; flex-direction: row; gap: 16px; width: 100%;">
         <div style="width: 252px; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.12); padding: 18px; border-radius: 22px; display: flex; flex-direction: column;">
           <span style="font-size: 10px; font-weight: 700; text-transform: uppercase; opacity: 0.5; letter-spacing: 0.04em; margin-bottom: 6px;">Solar Intensity</span>
@@ -373,6 +384,7 @@ document.getElementById("download-btn")?.addEventListener("click", () => {
         </div>
       </div>
 
+      <!-- Row 2 -->
       <div style="display: flex; flex-direction: row; gap: 16px; width: 100%;">
         <div style="width: 252px; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.12); padding: 18px; border-radius: 22px; display: flex; flex-direction: column; justify-content: center;">
           <span style="font-size: 10px; font-weight: 700; text-transform: uppercase; opacity: 0.5; letter-spacing: 0.04em; margin-bottom: 6px;">Atmospheric Moisture</span>
@@ -389,6 +401,7 @@ document.getElementById("download-btn")?.addEventListener("click", () => {
 
     </div>
 
+    <!-- Rainfall Tracker Banner -->
     <div style="width: 520px; background: rgba(16, 185, 129, 0.12); border: 1px solid rgba(16, 185, 129, 0.35); padding: 18px 22px; border-radius: 24px; display: flex; flex-direction: row; justify-content: space-between; align-items: center; margin-bottom: 25px;">
       <div style="display: flex; flex-direction: column;">
         <span style="font-size: 10px; font-weight: 700; text-transform: uppercase; color: #34d399; letter-spacing: 0.04em; margin-bottom: 4px;">Precipitation Tracker</span>
@@ -400,6 +413,7 @@ document.getElementById("download-btn")?.addEventListener("click", () => {
       </div>
     </div>
 
+    <!-- Footer Identity Meta Tag -->
     <div style="width: 520px; display: flex; flex-direction: row; justify-content: space-between; align-items: center; opacity: 0.45; font-size: 11px; font-weight: 600; letter-spacing: 0.01em;">
       <div>📍 Tigaon • Partido District • Camarines Sur</div>
       <div>PWS Hub Network</div>
