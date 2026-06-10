@@ -247,3 +247,36 @@ function updateRainfallChart(historyData) {
     }
   });
 }
+
+// --- SNAPSHOT DOWNLOAD ENGINE ---
+document.getElementById("download-btn")?.addEventListener("click", () => {
+  // Captures the entire body grid
+  const dashboardElement = document.getElementById("dashboard-body");
+  const stationLocation = document.getElementById("station-location")?.innerText || "Weather_Station";
+  
+  // Format filename using the current location name safely
+  const filename = `Weather_Snapshot_${stationLocation.replace(/[\s,]+/g, '_')}.png`;
+
+  // Hide the snapshot button instantly so it doesn't photograph itself
+  const downloadBtn = document.getElementById("download-btn");
+  if (downloadBtn) downloadBtn.style.visibility = "hidden";
+
+  html2canvas(dashboardElement, {
+    useCORS: true,          // Lets external assets render perfectly
+    scale: 2,               // Double resolution sharpness
+    backgroundColor: null,  // Preserves your gorgeous background gradients
+    logging: false
+  }).then(canvas => {
+    // Bring back the button to the webpage
+    if (downloadBtn) downloadBtn.style.visibility = "visible";
+
+    // Trigger the file download in browser memory
+    const link = document.createElement("a");
+    link.download = filename;
+    link.href = canvas.toDataURL("image/png");
+    link.click();
+  }).catch(err => {
+    console.error("Snapshot generation broke down:", err);
+    if (downloadBtn) downloadBtn.style.visibility = "visible";
+  });
+});

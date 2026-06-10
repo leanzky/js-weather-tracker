@@ -6,6 +6,7 @@
   <title>Public Weather Station Dashboard</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
@@ -24,8 +25,14 @@
           • Updated: <span id="station-time">--</span>
         </p>
       </div>
-      <div class="bg-white/10 backdrop-blur-md border border-white/10 px-4 py-2 rounded-xl text-xs font-bold tracking-wider uppercase shadow-sm">
-        Public Environmental Hub
+      <div class="flex flex-wrap gap-2 sm:self-center">
+        <button id="download-btn" class="bg-amber-500 hover:bg-amber-600 active:scale-95 transition-all px-4 py-2 rounded-xl text-xs font-bold tracking-wider uppercase shadow-sm text-slate-900 flex items-center gap-1.5">
+          📸 Take Snapshot
+        </button>
+        
+        <div class="bg-white/10 backdrop-blur-md border border-white/10 px-4 py-2 rounded-xl text-xs font-bold tracking-wider uppercase shadow-sm">
+          Public Environmental Hub
+        </div>
       </div>
     </header>
 
