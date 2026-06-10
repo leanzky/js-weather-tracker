@@ -2,7 +2,7 @@
  * Public Weather Dashboard Client Engine - Public-Friendly Edition
  */
 
-const BACKEND_API_URL = "http://localhost:3000/api/weather-cached"; 
+const BACKEND_API_URL = "http://https://js-weather-tracker.onrender.com/api/weather-cached"; 
 const REFRESH_INTERVAL = 5 * 60 * 1000; 
 
 let rainChartInstance = null; // Global tracker to manage and redraw our chart instance
